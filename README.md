@@ -31,40 +31,40 @@ matching.
 
 Convenient construction of object-like and array-like data structures:
 ```js
-const map = Map#{1: 2, three: 4, [[5]]: 6, 1: 'again'}
+const map = Map!{1: 2, three: 4, [[5]]: 6, 1: 'again'}
 // Map { 1 => 'again', 'three' => 4, [5] => 6 }
 
-const set = Set#[1,2,3,2]
+const set = Set![1,2,3,2]
 // Set [1, 2, 3]
 
-const opt = Some#1
+const opt = Some!1
 // Some { value: 1 }
 ```
 
 Destructuring assignment/binding:
 ```js
-const Map#{1: x, three: y} = map
+const Map!{1: x, three: y} = map
 x // 2
 y // 4
 
-const Set#[x,y] = set
+const Set![x,y] = set
 x // 1
 y // 2
 
-const Some#x = opt
+const Some!x = opt
 x // 1
 ```
 
 Match statement compatibility:
 ```js
 match (input) {
-  when Map#{1: x, 2: y} ~> ...
-  when /(?<year>\d{4})-(?<month>\d{2})/u#{groups: {year, month}} ~> {
+  when Map!{1: x, 2: y} ~> ...
+  when /(?<year>\d{4})-(?<month>\d{2})/u!{groups: {year, month}} ~> {
     console.log(`The year is ${year}, and the month is ${month}`)
   },
-  when Some#1 ~> `option succeeded with an internal value of 1`
-  when Some#x ~> `option succeeded with a non-1 value of ${x}`,
-  when None#{} ~> `option failed`
+  when Some!1 ~> `option succeeded with an internal value of 1`
+  when Some!x ~> `option succeeded with a non-1 value of ${x}`,
+  when None!{} ~> `option failed`
 }
 ```
 
@@ -73,7 +73,6 @@ match (input) {
 ### Related Active Proposals
 
 * [Pattern matching](https://github.com/tc39/proposal-pattern-matching)
-* [Private accessors](https://github.com/tc39/proposal-private-methods) (due to `#` syntax)
 * [Frozen/sealed object syntax](https://github.com/keithamus/object-freeze-seal-syntax)
 * [Richer Keys](https://docs.google.com/presentation/d/1q3CGeXqskL1gHTATH_VE9Dhj0VGTIAOzJ1cR0dYqDBk/edit#slide=id.p)
 * [`Object.fromEntries`](https://github.com/bakkot/object-from-entries)
@@ -90,7 +89,7 @@ converted to an iterator or an atomic value. The type of value passed to
 
 ```js
 // Tagged Object Literals
-Map#{foo: 1, 'foo': 1, [Symbol('bar')]: 2, 3: 4, [{}]: 5}
+Map!{foo: 1, 'foo': 1, [Symbol('bar')]: 2, 3: 4, [{}]: 5}
 === Map.from({[Symbol.iterator]: function* () {
   // IdentifierName interpreted as string
   yield ['foo', 1]
@@ -105,14 +104,14 @@ Map#{foo: 1, 'foo': 1, [Symbol('bar')]: 2, 3: 4, [{}]: 5}
 }}
 
 // Tagged Array Literals
-Set#[1,2,3]
+Set![1,2,3]
 === Set.from({[Symbol.iterator]: function* () {
   // Nothing special here, except the argument is not an Array
   yield 1; yield 2; yield 3
 }})
 
 // Tagged Value Literals
-Some#1
+Some!1
 === Some.from(1)
 ```
 
@@ -141,10 +140,10 @@ people. Literal syntax helps ease this a bit, specially in data structure-heavy
 code:
 
 ```js
-foo().Bar#[1,2,3]
-Bar { val: [1,2,3] }
-foo.Bar#[1,2,3]
-Bar { val: [1,2,3] }
+foo().Bar![1,2,3]
+// Bar { val: [1,2,3] }
+foo.Bar![1,2,3]
+// Bar { val: [1,2,3] }
 ```
 
 But, as implied before, the main benefit of extending tagged literal syntax to
@@ -167,10 +166,10 @@ on these keys is optional.
 The `valueOf` method should return an iterator
 
 ```js
-const Map#{1: x, y} = Map#{1: 'x', y: 'y'}
+const Map!{1: x, y} = Map!{1: 'x', y: 'y'}
 ===
 let x, y
-for (let entry of Map.valueOf(Map#{1: 'x', y: 'y'}, [1, 'y'])) {
+for (let entry of Map.valueOf(Map!{1: 'x', y: 'y'}, [1, 'y'])) {
   match (entry) {
     when [1, _x] ~> {
       x = _x
@@ -181,14 +180,14 @@ for (let entry of Map.valueOf(Map#{1: 'x', y: 'y'}, [1, 'y'])) {
   }
 }
 
-const Set#[a, b, c] = Set#[1,2,3,4]
+const Set![a, b, c] = Set![1,2,3,4]
 ===
-let [a,b,c] = Array.from(Set.valueOf(Set#[1,2,3,4], [0,1,2]))
+let [a,b,c] = Array.from(Set.valueOf(Set![1,2,3,4], [0,1,2]))
 
 class Some { constructor (val) { this._val = val } }
 Some.valueOf = (some) => some._val
 
-const Some#x = Some#1
+const Some!x = Some!1
 ===
 let x = Some.valueOf(new Some(1))
 // x === 1
