@@ -11,11 +11,11 @@
 ## Introduction
 
 This proposal extends both destructuring binding/assignment and the [`match`
-operator](https://github.com/tc39/proposal-pattern-matching) with the ability to
-apply custom destructuring and matching operations to matched data. It also adds
-a new constructor syntax for building these custom data structures with concise
-object and array style syntax while preserving their individual benefits and
-invariants.
+statement](https://github.com/tc39/proposal-pattern-matching) with the ability
+to apply custom destructuring and matching operations to matched data. It also
+adds a new constructor syntax for building these custom data structures with
+concise object and array style syntax while preserving their individual benefits
+and invariants.
 
 The syntax itself is derived from similar syntax in multiple other languages
 used for this purpose, and is meant to be reminiscent of tagged template
@@ -55,17 +55,16 @@ const Some#x = opt
 x // 1
 ```
 
-Match Operator compatibility:
+Match statement compatibility:
 ```js
 match (input) {
-  Map#{1: x, 2: y} => ...,
-  /(?<year>\d{4})-(?<month>\d{2})/u#{groups: {year, month}} => {
-    `The year is ${year}, and the month is ${month}`
+  when Map#{1: x, 2: y} ~> ...
+  when /(?<year>\d{4})-(?<month>\d{2})/u#{groups: {year, month}} ~> {
+    console.log(`The year is ${year}, and the month is ${month}`)
   },
-  // So I heard u liek monadz
-  Some#1 => `option succeeded with an internal value of 1`
-  Some#x => `option succeeded with a non-1 value of ${x}`,
-  None#{} => `option failed`
+  when Some#1 ~> `option succeeded with an internal value of 1`
+  when Some#x ~> `option succeeded with a non-1 value of ${x}`,
+  when None#{} ~> `option failed`
 }
 ```
 
@@ -173,8 +172,12 @@ const Map#{1: x, y} = Map#{1: 'x', y: 'y'}
 let x, y
 for (let entry of Map.valueOf(Map#{1: 'x', y: 'y'}, [1, 'y'])) {
   match (entry) {
-    [1, _x] => { x = _x },
-    ['y', _y] => { y = _y }
+    when [1, _x] ~> {
+      x = _x
+    }
+    when ['y', _y] ~> {
+      y = _y
+    }
   }
 }
 
