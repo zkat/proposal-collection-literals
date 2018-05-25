@@ -2,11 +2,28 @@
 
 ## [Status](https://tc39.github.io/process-document/)
 
-**Stage**: 0
+**Stage**: **WITHDRAWN**
 
 **Author**: Kat Marchán (npm, [@maybekatz](https://twitter.com/maybekatz))
 
 **Champions**: Kat Marchán (npm, [@maybekatz](https://twitter.com/maybekatz))
+
+## WITHDRAWN
+
+This proposal was presented to TC39 in May 2018 and voluntarily withdrawn during
+discussions. The author concluded this issue was best solved through an
+object-destructuring protocol corresponding to sequence iterators, in
+combination with `Map.from()` and company.
+
+JavaScript, unlike a lot of the static languages pattern matching concepts were
+based on, does not include enough static typing information to make things like
+destructuring or pattern matching efficient and cacheable enough to work well in
+these cases and stay performant. Additionally, this additional syntax did not
+add enough value to be worth the syntax budget expenditure.
+
+A different proposal will be submitted based on this one that talks about
+creation/extraction protocols in a unified way, but without adding additional
+syntax.
 
 ## Introduction
 
