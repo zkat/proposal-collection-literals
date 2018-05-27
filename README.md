@@ -99,15 +99,15 @@ match (input) {
 ## Construction Literals
 
 For construction, literals are a thin layer of syntax sugar over
-`Constructor.from()` functions. When a literal construction expression is found,
+`Constructor[Symbol.from]()` functions. When a literal construction expression is found,
 the left hand side is evaluated for its value, and the right hand side is
 converted to an iterator or an atomic value. The type of value passed to
-`.from()` depends on which of the three syntaxes is used:
+`[Symbol.from]()` depends on which of the three syntaxes is used:
 
 ```js
 // Tagged Object Literals
 Map!{foo: 1, 'foo': 1, [Symbol('bar')]: 2, 3: 4, [{}]: 5}
-=== Map.from({[Symbol.iterator]: function* () {
+=== Map[Symbol.from]({[Symbol.iterator]: function* () {
   // IdentifierName interpreted as string
   yield ['foo', 1]
   // StringLiteral PropertyNames
@@ -122,14 +122,14 @@ Map!{foo: 1, 'foo': 1, [Symbol('bar')]: 2, 3: 4, [{}]: 5}
 
 // Tagged Array Literals
 Set![1,2,3]
-=== Set.from({[Symbol.iterator]: function* () {
+=== Set[Symbol.from]({[Symbol.iterator]: function* () {
   // Nothing special here, except the argument is not an Array
   yield 1; yield 2; yield 3
 }})
 
 // Tagged Value Literals
 Some!1
-=== Some.from(1)
+=== Some[Symbol.from](1)
 ```
 
 ### Benefits
@@ -171,7 +171,7 @@ arrays and individual values is the correspondence to destructuring...
 When a user learns they can construct with one syntax, is becomes much easier to
 teach them how to destruct with it.
 
-While the common `.from()` method mechanism is what makes construction literals
+While the common `.[Symbol.from]()` method mechanism is what makes construction literals
 work, destructuring uses the standard iterator protocol through a
 `Symbol.valueOf` constructor method. If `Symbol.valueOf` is not present,
 `.valueOf()` is tried instead. If array or object-destructurng syntax is used
